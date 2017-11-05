@@ -81,9 +81,9 @@ int main(int argc, char* argv[])
 
     // leave client connection log
     char clnt_log[CONNECTION_LOG_SIZE];
-    snprintf(clnt_log, CONNECTION_LOG_SIZE, "%s:%d",
+    snprintf(clnt_log, CONNECTION_LOG_SIZE, "client connected: %s:%d",
             inet_ntoa(clnt_addr.sin_addr), clnt_addr.sin_port);
-    printf("client connected: %s\n", clnt_log);
+    printf("%s\n", clnt_log);
 
     // write to client socket repeatedly
     while (!feof(fp)) {

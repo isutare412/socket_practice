@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
     // send response to the server
     static const char response[] = "Thank you!";
-    if (write(sock, response, sizeof(response)) == -1) {
+    if (write(sock, response, strlen(response)) == -1) {
         handle_error("write error");
     }
 
