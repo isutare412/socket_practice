@@ -137,6 +137,8 @@ void serve_client(int socket)
     int str_len;
     char buf[BUF_SIZE];
     while ((str_len = read(socket, buf, BUF_SIZE)) != 0) {
+        buf[str_len] = '\0';
+        printf("%s", buf);
         write(socket, buf, str_len);
     }
 

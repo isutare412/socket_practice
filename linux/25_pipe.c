@@ -21,6 +21,9 @@ int main(int argc, const char* arv[])
         return 0;
     }
 
+    static useconds_t A_WHILE = 5 * 100 * 1000; // 0.5 second
+    usleep(A_WHILE);
+
     char buf[BUF_SIZE];
     read(fds[0], buf, BUF_SIZE);
     puts(buf);

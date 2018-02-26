@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/select.h>
 
-#define BUF_SIZE 30
+#define BUF_SIZE 32
 
 void handle_error(const char* msg);
 
@@ -14,10 +14,11 @@ int main(int argc, const char* argv[])
     FD_SET(STDIN_FILENO, &reads);
 
     struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
     while (1) {
         temps = reads;
-        timeout.tv_sec = 1;
-        timeout.tv_usec = 0;
 
         int result = select(1, &temps, 0, 0, &timeout);
         if (result == -1) {
