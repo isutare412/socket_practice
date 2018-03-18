@@ -11,5 +11,10 @@ int rsserv_sockbind(short port);
 // 2. return accepted client socket file descriptor
 int rsserv_acceptlog(int sock);
 
+// 1. make socket
+// 2. connect to server
+// 3. return socket file descriptor
+int rsclnt_sockconnect(const char* ip, short port);
+
 // print error from errno then exit with EXIT_FAILURE
 void handle_error(const char* msg);

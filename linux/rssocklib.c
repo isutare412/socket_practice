@@ -53,6 +53,25 @@ int rsserv_acceptlog(int sock)
     return clnt_sock;
 }
 
+int rsclnt_sockconnect(const char* ip, short port)
+{
+    int sock = socket(PF_INET, SOCK_STREAM, 0);
+    if (sock == -1) {
+        handle_error("socket()");
+    }
+
+    struct sockaddr_in serv_addr;
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr(ip);
+    serv_addr.sin_port = htons(port);
+
+    if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {
+        handle_error("connect()");
+    }
+    return sock;
+}
+
 void handle_error(const char* msg)
 {
     perror(msg);
