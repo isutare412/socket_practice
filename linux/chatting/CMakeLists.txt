@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.13.4)
+
+project("Chatting")
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set(SRC_DIR src)
+set(COMMON_DIR ${SRC_DIR}/common)
+set(SERVER_DIR ${SRC_DIR}/server)
+set(CLIENT_DIR ${SRC_DIR}/client)
+
+set(COMMON_SRC ${COMMON_DIR}/test.c)
+set(SERVER_SRC ${SERVER_DIR}/hello_server.c)
+set(CLIENT_SRC ${CLIENT_DIR}/hello_client.c)
+
+include_directories(src)
+add_executable(server ${COMMON_SRC} ${SERVER_SRC})
+add_executable(client ${COMMON_SRC} ${CLIENT_SRC})
