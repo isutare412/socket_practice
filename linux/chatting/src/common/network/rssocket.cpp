@@ -99,7 +99,7 @@ listen(
 int
 accept(
     int socket,
-    const sockaddr_in& addr
+    sockaddr_in& addr
 ) noexcept
 {
     socklen_t addr_sz = sizeof(addr);
@@ -112,6 +112,18 @@ accept(
     }
 
     return clnt_sock;
+}
+
+void
+connect(
+    int socket,
+    const sockaddr_in& addr
+) noexcept
+{
+    if (::connect(socket, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+    {
+        handle_perror("failed to connect; address(%s)", sockaddr_to_string(addr).c_str());
+    }
 }
 
 }

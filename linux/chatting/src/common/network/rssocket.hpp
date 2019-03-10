@@ -43,6 +43,12 @@ listen(
 int
 accept(
     int socket,
+    sockaddr_in& addr
+) noexcept;
+
+void
+connect(
+    int socket,
     const sockaddr_in& addr
 ) noexcept;
 
