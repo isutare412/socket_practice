@@ -29,7 +29,7 @@ sockaddr_to_string(
     std::ostringstream oss;
     oss << ip_to_string(addr.sin_addr.s_addr);
     oss << ':';
-    oss << addr.sin_port;
+    oss << ntohs(addr.sin_port);
 
     return oss.str();
 }
