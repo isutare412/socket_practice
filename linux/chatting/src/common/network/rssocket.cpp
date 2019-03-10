@@ -14,7 +14,7 @@ namespace RS
 {
 
 int
-socket()
+socket() noexcept
 {
     // open TCP socket
     int sock = ::socket(PF_INET, SOCK_STREAM, 0);
@@ -30,7 +30,7 @@ sockaddr_in
 make_sockaddr(
     in_addr_t addr,
     in_port_t port
-)
+) noexcept
 {
     sockaddr_in serv_addr;
     std::memset(&serv_addr, 0, sizeof(serv_addr));
@@ -45,7 +45,7 @@ void
 setsockopt(
     int socket,
     SocketOption option
-)
+) noexcept
 {
     switch (option)
     {
@@ -73,7 +73,7 @@ void
 bind(
     int socket,
     const sockaddr_in& addr
-)
+) noexcept
 {
     if (::bind(socket,
         (struct sockaddr*)&addr, sizeof(addr)) == -1)
@@ -87,7 +87,7 @@ void
 listen(
     int socket,
     int accept_buf_size
-)
+) noexcept
 {
     if (::listen(socket, accept_buf_size) == -1)
     {
@@ -100,7 +100,7 @@ int
 accept(
     int socket,
     const sockaddr_in& addr
-)
+) noexcept
 {
     socklen_t addr_sz = sizeof(addr);
     int clnt_sock = ::accept(

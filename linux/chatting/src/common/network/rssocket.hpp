@@ -4,8 +4,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include <vector>
-
 namespace RS
 {
 
@@ -16,37 +14,37 @@ enum class SocketOption : char
 
 
 int
-socket();
+socket() noexcept;
 
 sockaddr_in
 make_sockaddr(
     in_addr_t addr,
     in_port_t port
-);
+) noexcept;
 
 void
 setsockopt(
     int socket,
     SocketOption option
-);
+) noexcept;
 
 void
 bind(
     int socket,
     const sockaddr_in& addr
-);
+) noexcept;
 
 void
 listen(
     int socket,
     int accept_buf_size
-);
+) noexcept;
 
 int
 accept(
     int socket,
     const sockaddr_in& addr
-);
+) noexcept;
 
 }
 
