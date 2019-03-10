@@ -15,6 +15,9 @@ set(CLIENT_DIR ${SRC_DIR}/client)
 set(COMMON_SRC
     ${COMMON_DIR}/network/tools.cpp
     ${COMMON_DIR}/network/rssocket.cpp
+    ${COMMON_DIR}/thread/thread_pool.cpp
+    ${COMMON_DIR}/thread/thread_task.cpp
+    ${COMMON_DIR}/thread/ticker.cpp
 )
 set(SERVER_SRC ${SERVER_DIR}/chat_server.cpp)
 set(CLIENT_SRC ${CLIENT_DIR}/chat_client.cpp)
