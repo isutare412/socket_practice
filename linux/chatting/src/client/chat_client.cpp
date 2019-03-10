@@ -1,10 +1,10 @@
-#include <stdio.h>
-#include <common/test.h>
+#include <cstdio>
+
+#include "common/network/rssocket.hpp"
 
 int main()
 {
     printf("I'm client\n");
-    test();
 
     return 0;
 }
