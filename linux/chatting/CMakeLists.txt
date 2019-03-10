@@ -19,8 +19,14 @@ set(COMMON_SRC
     ${COMMON_DIR}/thread/thread_task.cpp
     ${COMMON_DIR}/thread/ticker.cpp
 )
-set(SERVER_SRC ${SERVER_DIR}/chat_server.cpp)
-set(CLIENT_SRC ${CLIENT_DIR}/chat_client.cpp)
+
+set(SERVER_SRC
+    ${SERVER_DIR}/server_main.cpp
+)
+
+set(CLIENT_SRC
+    ${CLIENT_DIR}/client_main.cpp
+)
 
 include_directories(src)
 add_executable(server ${COMMON_SRC} ${SERVER_SRC})
