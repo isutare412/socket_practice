@@ -19,7 +19,7 @@ public:
         uint32_t listen_queue_size
     ) noexcept;
 
-    void
+    bool
     run() noexcept;
 
 private:

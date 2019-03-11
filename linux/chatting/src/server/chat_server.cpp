@@ -60,9 +60,14 @@ ChatServer::initialize(
     return true;
 }
 
-void
+bool
 ChatServer::run() noexcept
 {
+    if (!m_threads.run(true))
+    {
+        return false;
+    }
+
     while (true)
     {
         sockaddr_in clnt_addr;
@@ -78,6 +83,8 @@ ChatServer::run() noexcept
             }
         );
     }
+
+    return true;
 }
 
 void

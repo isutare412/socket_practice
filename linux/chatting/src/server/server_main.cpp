@@ -18,11 +18,15 @@ int main(int argc, const char* argv[])
     ChatServer chat_server;
     if (!chat_server.initialize(atoi(argv[1]), LISTEN_QUEUE_SIZE))
     {
-        fprintf(stderr, "failed to initailize chat_server\n");
+        fprintf(stderr, "failed to initailize ChatServer\n");
         exit(EXIT_FAILURE);
     }
 
-    chat_server.run();
+    if (!chat_server.run())
+    {
+        fprintf(stderr, "failed to run ChatServer\n");
+        exit(EXIT_FAILURE);
+    }
 
     return EXIT_SUCCESS;
 }

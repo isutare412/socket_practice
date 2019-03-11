@@ -26,6 +26,11 @@ public:
     virtual ~ThreadPool();
 
 public:
+    bool
+    run(
+        bool start
+    ) noexcept;
+
     template <typename Func, typename... Args>
     void
     enqueue(
@@ -37,6 +42,15 @@ private:
     void
     update() noexcept;
 
+    void
+    handle_task() noexcept;
+
+    bool
+    start_running() noexcept;
+
+    bool
+    stop_running() noexcept;
+
 private:
     std::mutex m_mutex;
     std::condition_variable m_condition;
@@ -44,6 +58,7 @@ private:
     Ticker m_ticker;
 
     std::vector<std::thread> m_workers;
+    const uint32_t m_pool_size;
     uint32_t m_idleWorkers;
 
     std::queue<std::unique_ptr<ThreadTask>> m_allocatedJob;
