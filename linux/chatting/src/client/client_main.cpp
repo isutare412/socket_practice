@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+#include <cstring>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
@@ -26,24 +27,14 @@ int main(int argc, const char* argv[])
     printf("connected to server; address(%s)\n",
         RS::sockaddr_to_string(sock_addr).c_str());
 
-    char read_buf[256];
-    int cur_buf_cursor = 0;
-    int remain_buf_size = sizeof(read_buf);
-    int read_cnt;
-    while (
-        (read_cnt = read(sock,
-                         &read_buf[cur_buf_cursor],
-                         remain_buf_size - 1)
-        ) > 0
-    )
+    char read_buf[256] = { '\0', };
+    RS::ErrorType error = RS::read_nbytes(sock, read_buf, sizeof(read_buf) - 1);
+    if (error != RS::ErrorType::NO_ERROR
+        && error != RS::ErrorType::EOF_DETECTED)
     {
-        cur_buf_cursor += read_cnt;
-        remain_buf_size -= read_cnt;
-    }
-
-    if (read_cnt == -1)
-    {
-        RS::handle_perror("read error");
+        fprintf(stderr, "failed to read from socket\n");
+        close(sock);
+        exit(EXIT_FAILURE);
     }
 
     printf("Got file from server...\n");
