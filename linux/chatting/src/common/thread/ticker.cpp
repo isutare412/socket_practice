@@ -19,6 +19,14 @@ Ticker::set_func(
     m_onTick = onTick;
 }
 
+void
+Ticker::set_func(
+    std::function<void(std::chrono::milliseconds)>&& onTick
+) noexcept
+{
+    m_onTick = std::move(onTick);
+}
+
 bool
 Ticker::start() noexcept
 {

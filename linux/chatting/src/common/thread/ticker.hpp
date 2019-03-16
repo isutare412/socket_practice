@@ -20,6 +20,11 @@ public:
         const std::function<void(std::chrono::milliseconds)>& onTick
     ) noexcept;
 
+    void
+    set_func(
+        std::function<void(std::chrono::milliseconds)>&& onTick
+    ) noexcept;
+
     bool
     start() noexcept;
     void
