@@ -11,7 +11,7 @@
 #include "chat_server.hpp"
 
 ChatServer::ChatServer() noexcept
-    : m_server_socket(0),
+    : m_server_socket(-1),
     m_threads(std::thread::hardware_concurrency())
 {
     memset(&m_server_addr, 0, sizeof(m_server_addr));
@@ -30,7 +30,6 @@ ChatServer::~ChatServer()
     );
 
     m_socket_manager.clear();
-    close(m_server_socket);
 }
 
 bool
@@ -40,13 +39,11 @@ ChatServer::initialize(
 ) noexcept
 {
     int server_socket = RS::socket();
-    m_server_socket = server_socket;
     printf("socket created; socket_fd(%d)\n", server_socket);
 
     sockaddr_in sock_addr = RS::make_sockaddr(
         htonl(INADDR_ANY), htons(port)
     );
-    m_server_addr = sock_addr;
 
     RS::setsockopt(server_socket, RS::SocketOption::REUSEADDR);
     RS::bind(server_socket, sock_addr);
@@ -56,6 +53,10 @@ ChatServer::initialize(
     RS::listen(server_socket, listen_queue_size);
     printf("start to listen; socket_fd(%d) queue_size(%d)\n",
         server_socket, listen_queue_size);
+
+    m_server_socket = server_socket;
+    m_server_addr = sock_addr;
+    m_socket_manager.register_socket(server_socket, sock_addr);
 
     return true;
 }
