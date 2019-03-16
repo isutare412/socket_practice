@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 
 #include "common/thread/thread_pool.hpp"
-#include "client_socket_manager.hpp"
+#include "socket_manager.hpp"
 
 class ChatServer
 {

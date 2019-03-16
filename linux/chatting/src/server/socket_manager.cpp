@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-#include "client_socket_manager.hpp"
+#include "socket_manager.hpp"
 
 ClientSocketManager::ClientSocketManager() noexcept
 {
