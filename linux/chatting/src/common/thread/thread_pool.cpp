@@ -114,7 +114,7 @@ ThreadPool::start_running() noexcept
         );
     }
 
-    m_ticker.setFunc([this](std::chrono::milliseconds)
+    m_ticker.set_func([this](std::chrono::milliseconds)
     {
         update();
     });

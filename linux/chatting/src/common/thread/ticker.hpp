@@ -16,7 +16,7 @@ public:
 
 public:
     void
-    setFunc(
+    set_func(
         const std::function<void(std::chrono::milliseconds)>& onTick
     ) noexcept;
 
@@ -27,7 +27,7 @@ public:
 
 private:
     void
-    timerLoop() noexcept;
+    timer_loop() noexcept;
 
 private:
     const std::chrono::milliseconds m_tickInterval;

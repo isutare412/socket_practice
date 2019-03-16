@@ -12,7 +12,7 @@ Ticker::Ticker(const std::chrono::milliseconds& msec) noexcept
 }
 
 void
-Ticker::setFunc(
+Ticker::set_func(
     const std::function<void(std::chrono::milliseconds)>& onTick
 ) noexcept
 {
@@ -28,7 +28,7 @@ Ticker::start() noexcept
     }
 
     m_running = true;
-    std::thread startTick(&Ticker::timerLoop, this);
+    std::thread startTick(&Ticker::timer_loop, this);
     startTick.detach();
     return true;
 }
@@ -40,7 +40,7 @@ Ticker::stop() noexcept
 }
 
 void
-Ticker::timerLoop() noexcept
+Ticker::timer_loop() noexcept
 {
     using namespace std::chrono;
 
