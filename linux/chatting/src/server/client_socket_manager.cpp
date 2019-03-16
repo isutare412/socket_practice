@@ -28,6 +28,12 @@ ClientSocketManager::register_socket(
     {
         std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
 
+        if (!m_poll_manager.register_socket(socket, POLLIN | POLLPRI))
+        {
+            fprintf(stderr,
+                "cannot register socket to poll manager; already exists; socket(%d)", socket);
+            return false;
+        };
         m_sockets[socket] = address;
     }
     return true;
@@ -47,6 +53,7 @@ ClientSocketManager::unregister_socket(
         std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
 
         m_sockets.erase(socket);
+        m_poll_manager.unregister_socket(socket);
     }
     return true;
 }
@@ -85,6 +92,7 @@ ClientSocketManager::clear() noexcept
 {
     std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
     m_sockets.clear();
+    m_poll_manager.clear();
 }
 
 sockaddr_in

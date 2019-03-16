@@ -4,11 +4,13 @@
 #include <arpa/inet.h>
 
 #include <map>
+#include <vector>
 #include <mutex>
 #include <shared_mutex>
 #include <functional>
 
 #include "common/network/rssocket.hpp"
+#include "common/network/poll_manager.hpp"
 
 class ClientSocketManager
 {
@@ -52,6 +54,7 @@ public:
 private:
     mutable std::shared_timed_mutex m_mutex;
     std::map<socket_t, sockaddr_in> m_sockets;
+    RS::PollManager m_poll_manager;
 };
 
 #endif // __CLIENT_MANAGER_HPP__
