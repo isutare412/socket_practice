@@ -3,6 +3,9 @@
 
 #include <arpa/inet.h>
 
+#include <mutex>
+
+#include "common/network/poll.hpp"
 #include "common/thread/thread_pool.hpp"
 #include "socket_manager.hpp"
 
@@ -23,6 +26,12 @@ public:
     run() noexcept;
 
 private:
+    void
+    register_socket(
+        int socket,
+        const sockaddr_in& addr
+    ) noexcept;
+
     void
     close_client(
         int socket
@@ -46,6 +55,9 @@ private:
 
     RS::ThreadPool m_threads;
     ClientSocketManager m_socket_manager;
+
+    std::mutex m_poll_mutex;
+    RS::PollManager m_polls;
 };
 
 #endif // __CHAT_SERVER_HPP__

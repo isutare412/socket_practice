@@ -1,5 +1,6 @@
 #include <cstring>
 #include <unistd.h>
+#include <poll.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
@@ -30,6 +31,11 @@ ChatServer::~ChatServer()
     );
 
     m_socket_manager.clear();
+
+    {
+        std::lock_guard<std::mutex> lock(m_poll_mutex);
+        m_polls.clear();
+    }
 }
 
 bool
@@ -56,7 +62,7 @@ ChatServer::initialize(
 
     m_server_socket = server_socket;
     m_server_addr = sock_addr;
-    m_socket_manager.register_socket(server_socket, sock_addr);
+    register_socket(server_socket, sock_addr);
 
     return true;
 }
@@ -71,21 +77,76 @@ ChatServer::run() noexcept
 
     while (true)
     {
-        sockaddr_in clnt_addr;
-        int clnt_sock = RS::accept(m_server_socket, clnt_addr);
-        printf("client connected; address(%s)\n",
-            RS::sockaddr_to_string(clnt_addr).c_str());
+        std::vector<pollfd> poll_result;
+        {
+            std::lock_guard<std::mutex> lock(m_poll_mutex);
 
-        m_socket_manager.register_socket(clnt_sock, clnt_addr);
-        m_threads.enqueue(
-            [this, clnt_sock]
+            // wait until at least one socket is polled
+            const std::vector<pollfd>* res = m_polls.poll(-1);
+            if (res == nullptr)
             {
-                send_file(clnt_sock, "test.txt");
+                continue;
             }
-        );
+
+            // return copy of poll_results to protect m_poll_manager by m_mutex
+            poll_result = *res;
+        }
+
+        for (const pollfd& status : poll_result)
+        {
+            const int socket = status.fd;
+            const short revents = status.revents;
+
+            // the socket has been disconnected 
+            if (revents & POLLHUP)
+            {
+                close_client(socket);
+            }
+            // accept client from server socket
+            else if (socket == m_server_socket && (revents & POLLIN))
+            {
+                sockaddr_in clnt_addr;
+                int clnt_sock = RS::accept(socket, clnt_addr);
+                printf("client connected; address(%s)\n",
+                    RS::sockaddr_to_string(clnt_addr).c_str());
+
+                register_socket(clnt_sock, clnt_addr);
+            }
+            // handle client socket
+            else
+            {
+                // TODO: handle client
+
+                // m_threads.enqueue(
+                //     [this, clnt_sock]
+                //     {
+                //         send_file(clnt_sock, "test.txt");
+                //     }
+                // );
+            }
+        }
     }
 
     return true;
+}
+
+void
+ChatServer::register_socket(
+    int socket,
+    const sockaddr_in& addr
+) noexcept
+{
+    m_socket_manager.register_socket(socket, addr);
+
+    {
+        std::lock_guard<std::mutex> lock(m_poll_mutex);
+
+        if (!m_polls.register_socket(socket, POLLIN | POLLPRI))
+        {
+            fprintf(stderr,
+                "cannot register socket to poll manager; already exists; socket(%d)\n", socket);
+        };
+    }
 }
 
 void
@@ -102,6 +163,11 @@ ChatServer::close_client(
 
     close(socket);
     m_socket_manager.unregister_socket(socket);
+
+    {
+        std::lock_guard<std::mutex> lock(m_poll_mutex);
+        m_polls.unregister_socket(socket);
+    }
 
     printf("client closed; socket(%d) address(%s)\n",
         socket, RS::sockaddr_to_string(address).c_str());
