@@ -97,32 +97,31 @@ ChatServer::run() noexcept
             const int socket = status.fd;
             const short revents = status.revents;
 
+            if (revents == 0)
+            {
+                continue;
+            }
             // the socket has been disconnected 
-            if (revents & POLLHUP)
+            else if (revents & POLLHUP)
             {
                 close_client(socket);
             }
-            // accept client from server socket
-            else if (socket == m_server_socket && (revents & POLLIN))
+            else if (revents & POLLIN)
             {
-                sockaddr_in clnt_addr;
-                int clnt_sock = RS::accept(socket, clnt_addr);
-                printf("client connected; address(%s)\n",
-                    RS::sockaddr_to_string(clnt_addr).c_str());
-
-                register_socket(clnt_sock, clnt_addr);
-            }
-            // handle client socket
-            else
-            {
-                // TODO: handle client
-
-                // m_threads.enqueue(
-                //     [this, clnt_sock]
-                //     {
-                //         send_file(clnt_sock, "test.txt");
-                //     }
-                // );
+                // accept client from server socket
+                if (socket == m_server_socket)
+                {
+                    accept_client(socket);
+                }
+                // handle client socket
+                else
+                {
+                    // m_threads.enqueue([this, socket]
+                    // {
+                    //     echo_client(socket);
+                    // });
+                    echo_client(socket);
+                }
             }
         }
     }
@@ -131,22 +130,16 @@ ChatServer::run() noexcept
 }
 
 void
-ChatServer::register_socket(
-    int socket,
-    const sockaddr_in& addr
+ChatServer::accept_client(
+    int socket
 ) noexcept
 {
-    m_socket_manager.register_socket(socket, addr);
+    sockaddr_in clnt_addr;
+    int clnt_sock = RS::accept(socket, clnt_addr);
+    printf("client connected; address(%s)\n",
+        RS::sockaddr_to_string(clnt_addr).c_str());
 
-    {
-        std::lock_guard<std::mutex> lock(m_poll_mutex);
-
-        if (!m_polls.register_socket(socket, POLLIN | POLLPRI))
-        {
-            fprintf(stderr,
-                "cannot register socket to poll manager; already exists; socket(%d)\n", socket);
-        };
-    }
+    register_socket(clnt_sock, clnt_addr);
 }
 
 void
@@ -174,11 +167,39 @@ ChatServer::close_client(
 }
 
 void
-ChatServer::serv_client(
+ChatServer::register_socket(
+    int socket,
+    const sockaddr_in& addr
+) noexcept
+{
+    m_socket_manager.register_socket(socket, addr);
+
+    {
+        std::lock_guard<std::mutex> lock(m_poll_mutex);
+
+        if (!m_polls.register_socket(socket, POLLIN | POLLPRI))
+        {
+            fprintf(stderr,
+                "cannot register socket to poll manager; already exists; socket(%d)\n", socket);
+        };
+    }
+}
+
+void
+ChatServer::echo_client(
     int sock_fd
 ) noexcept
 {
-    // TODO
+    printf("before.......sock(%d)\n", sock_fd);
+    char buf[256];
+    int str_len = read(sock_fd, buf, sizeof(buf));
+    write(sock_fd, buf, str_len);
+    printf("after........sock(%d)\n", sock_fd);
+
+    //while ((str_len = read(sock_fd, buf, sizeof(buf))) != 0)
+    //{
+    //    write(sock_fd, buf, str_len);
+    //}
 }
 
 void
@@ -190,7 +211,7 @@ ChatServer::send_file(
     std::ifstream ifs(filename);
     if (ifs.fail())
     {
-        printf("file does not exists; file(%s)\n", filename);
+        fprintf(stderr, "file does not exists; file(%s)\n", filename);
         return;
     }
 

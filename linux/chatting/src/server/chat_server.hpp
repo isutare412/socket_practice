@@ -27,9 +27,8 @@ public:
 
 private:
     void
-    register_socket(
-        int socket,
-        const sockaddr_in& addr
+    accept_client(
+        int socket
     ) noexcept;
 
     void
@@ -37,9 +36,15 @@ private:
         int socket
     ) noexcept;
 
+    void
+    register_socket(
+        int socket,
+        const sockaddr_in& addr
+    ) noexcept;
+
 private:
     void
-    serv_client(
+    echo_client(
         int sock_fd
     ) noexcept;
 
