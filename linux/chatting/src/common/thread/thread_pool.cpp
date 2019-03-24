@@ -1,26 +1,28 @@
-#include "thread_pool.hpp"
+#include <cstdio>
 
 #include <iostream>
 #include <chrono>
+
+#include "thread_pool.hpp"
 
 namespace RS
 {
 
 ThreadPool::ThreadPool(uint32_t poolsize) noexcept
-    : m_ticker(std::chrono::milliseconds(100)),
+    : m_semaphore(0),
     m_pool_size(poolsize),
-    m_idleWorkers(poolsize),
+    m_block_enqueue(false),
     m_terminate(false)
 {
 }
 
 ThreadPool::~ThreadPool()
 {
-    stop_running();
+    stop_running(false);
 
-    if (m_tasks.size() > 0)
+    if (m_allocatedJob.size() > 0)
     {
-        fprintf(stdout, "tasks(%lu) left while shutting down ThreadPool\n", m_tasks.size());
+        printf("tasks(%lu) left while shutting down ThreadPool\n", m_allocatedJob.size());
     }
 }
 
@@ -35,28 +37,7 @@ ThreadPool::run(
     }
     else
     {
-        return stop_running();
-    }
-}
-
-void
-ThreadPool::update() noexcept
-{
-    std::unique_lock<std::mutex> lock(m_mutex);
-
-    if (m_tasks.empty() || m_terminate)
-    {
-        return;
-    }
-
-    while (!m_tasks.empty() && m_idleWorkers > 0)
-    {
-        m_allocatedJob.push(std::move(m_tasks.front()));
-        m_tasks.pop();
-
-        lock.unlock();
-        m_condition.notify_one();
-        lock.lock();
+        return stop_running(true);
     }
 }
 
@@ -67,25 +48,21 @@ ThreadPool::handle_task() noexcept
     {
         std::unique_ptr<ThreadTask> task;
         {
-            std::unique_lock<std::mutex> lock(m_mutex);
-
-            m_idleWorkers += 1;
-            if (m_terminate)
-            {
-                return;
-            }
-
-            m_condition.wait(lock, [this]
-            {
-                return m_terminate || !m_allocatedJob.empty();
-            });
+            m_semaphore.wait();
+            std::lock_guard<decltype(m_mutex)> lock(m_mutex);
 
             if (m_terminate)
             {
+                std::cout << "thread terminated; id(" << std::this_thread::get_id() << ")\n";
                 return;
             }
 
-            m_idleWorkers -= 1;
+            if (m_allocatedJob.empty())
+            {
+                fprintf(stderr, "no allocated job... wrong wakeup\n");
+                continue;
+            }
+
             task = std::move(m_allocatedJob.front());
             m_allocatedJob.pop();
         }
@@ -97,6 +74,7 @@ ThreadPool::handle_task() noexcept
 bool
 ThreadPool::start_running() noexcept
 {
+    m_block_enqueue = false;
     m_terminate = false;
 
     if (m_workers.size() != 0)
@@ -114,23 +92,33 @@ ThreadPool::start_running() noexcept
         );
     }
 
-    m_ticker.set_func([this](std::chrono::milliseconds)
-    {
-        update();
-    });
-
-    return m_ticker.start();
+    return true;
 }
 
 bool
-ThreadPool::stop_running() noexcept
+ThreadPool::stop_running(
+    bool wait_task
+) noexcept
 {
+    m_block_enqueue = true;
+
+    while (true)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<decltype(m_mutex)> lock(m_mutex);
+
+        if (wait_task && m_allocatedJob.size() > 0)
+        {
+            continue;
+        }
+
         m_terminate = true;
+        break;
     }
-    m_ticker.stop();
-    m_condition.notify_all();
+
+    for (uint32_t i = 0; i < m_workers.size(); ++i)
+    {
+        m_semaphore.notify();
+    }
 
     for (std::thread& worker : m_workers)
     {

@@ -13,8 +13,8 @@
 #include <mutex>
 #include <condition_variable>
 
-#include "ticker.hpp"
 #include "thread_task.hpp"
+#include "semaphore.hpp"
 
 namespace RS
 {
@@ -40,29 +40,25 @@ public:
 
 private:
     void
-    update() noexcept;
-
-    void
     handle_task() noexcept;
 
     bool
     start_running() noexcept;
 
     bool
-    stop_running() noexcept;
+    stop_running(
+        bool wait_task
+    ) noexcept;
 
 private:
     std::mutex m_mutex;
-    std::condition_variable m_condition;
-
-    Ticker m_ticker;
+    Semaphore m_semaphore;
 
     std::vector<std::thread> m_workers;
     const uint32_t m_pool_size;
-    uint32_t m_idleWorkers;
 
     std::queue<std::unique_ptr<ThreadTask>> m_allocatedJob;
-    std::queue<std::unique_ptr<ThreadTask>> m_tasks;
+    bool m_block_enqueue;
     bool m_terminate;
 };
 
@@ -78,15 +74,19 @@ ThreadPool::enqueue(
         std::forward<Args>(args)...
     );
 
-    std::lock_guard<std::mutex> lock(m_mutex);
-
-    if (m_terminate)
     {
-        std::cerr << "cannot enqueue while terminating\n";
-        return;
+        std::lock_guard<decltype(m_mutex)> lock(m_mutex);
+
+        if (m_block_enqueue)
+        {
+            std::cerr << "cannot enqueue while terminating\n";
+            return;
+        }
+
+        m_allocatedJob.emplace(std::make_unique<ThreadTask>(std::move(boundTask)));
     }
 
-    m_tasks.emplace(std::make_unique<ThreadTask>(std::move(boundTask)));
+    m_semaphore.notify();
 }
 
 } // RS

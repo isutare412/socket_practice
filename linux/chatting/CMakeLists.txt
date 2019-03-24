@@ -18,7 +18,7 @@ set(COMMON_SRC
     ${COMMON_DIR}/network/poll.cpp
     ${COMMON_DIR}/thread/thread_pool.cpp
     ${COMMON_DIR}/thread/thread_task.cpp
-    ${COMMON_DIR}/thread/ticker.cpp
+    ${COMMON_DIR}/thread/semaphore.cpp
 )
 
 set(SERVER_SRC
