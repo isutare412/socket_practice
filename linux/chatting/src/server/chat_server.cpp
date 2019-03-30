@@ -190,16 +190,14 @@ ChatServer::echo_client(
     int sock_fd
 ) noexcept
 {
-    printf("before.......sock(%d)\n", sock_fd);
     char buf[256];
-    int str_len = read(sock_fd, buf, sizeof(buf));
-    write(sock_fd, buf, str_len);
-    printf("after........sock(%d)\n", sock_fd);
+    int str_len = read(sock_fd, buf, sizeof(buf) - 1);
+    buf[str_len] = '\0';
 
-    //while ((str_len = read(sock_fd, buf, sizeof(buf))) != 0)
-    //{
-    //    write(sock_fd, buf, str_len);
-    //}
+    write(sock_fd, buf, str_len);
+
+    buf[strcspn(buf, "\r\n")] = '\0';
+    printf("relayed message; client(%d) message(%s)\n", sock_fd, buf);
 }
 
 void
