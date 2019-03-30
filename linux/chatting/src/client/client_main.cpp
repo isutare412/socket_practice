@@ -27,18 +27,31 @@ int main(int argc, const char* argv[])
     printf("connected to server; address(%s)\n",
         RS::sockaddr_to_string(sock_addr).c_str());
 
-    char read_buf[256] = { '\0', };
-    RS::ErrorType error = RS::read_nbytes(sock, read_buf, sizeof(read_buf) - 1);
-    if (error != RS::ErrorType::NO_ERROR
-        && error != RS::ErrorType::EOF_DETECTED)
+    char message[256] = { '\0', };
+    while (true)
     {
-        fprintf(stderr, "failed to read from socket\n");
-        close(sock);
-        exit(EXIT_FAILURE);
-    }
+        fputs("Input message(Q to quit): ", stdout);
+        fgets(message, sizeof(message), stdin);
+        message[strcspn(message, "\r\n")] = '\0';
 
-    printf("Got file from server...\n");
-    printf("%s\n", read_buf);
+        if (!strcmp(message, "q") || !strcmp(message, "Q"))
+        {
+            break;
+        }
+
+        int write_len = write(sock, message, strlen(message));
+        memset(message, 0, sizeof(message));
+
+        RS::ErrorType error = RS::read_nbytes(sock, message, write_len);
+        if (error == RS::ErrorType::SYS_ERROR)
+        {
+            fprintf(stderr, "failed to read from socket\n");
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
+
+        printf("Message from server: %s\n", message);
+    }
 
     close(sock);
 
