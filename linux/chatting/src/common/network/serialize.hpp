@@ -17,31 +17,31 @@ public:
     Serializer() noexcept;
 
 public:
-    Serializer&
+    void
     value(bool& val) noexcept;
 
-    Serializer&
+    void
     value(int16_t& val) noexcept;
 
-    Serializer&
+    void
     value(uint16_t& val) noexcept;
 
-    Serializer&
+    void
     value(int32_t& val) noexcept;
 
-    Serializer&
+    void
     value(uint32_t& val) noexcept;
 
-    Serializer&
+    void
     value(float& val) noexcept;
 
-    Serializer&
+    void
     value(double& val) noexcept;
 
-    Serializer&
+    void
     value(long double& val) noexcept;
 
-    Serializer&
+    void
     value(char* val, uint32_t length) noexcept;
 
 private:

@@ -14,67 +14,58 @@ Serializer::Serializer() noexcept
     ::memset(m_buf, '\0', SERIALIZE_BUF_SIZE);
 }
 
-Serializer&
+void
 Serializer::value(bool& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(int16_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(uint16_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(int32_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(uint32_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(float& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(double& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(long double& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
-    return *this;
 }
 
-Serializer&
+void
 Serializer::value(char* val, uint32_t length) noexcept
 {
     value((void*)val, length);
-    return *this;
 }
 
 ISerializer::ISerializer() noexcept
