@@ -9,7 +9,7 @@
 #include <shared_mutex>
 #include <functional>
 
-#include "common/network/rssocket.hpp"
+#include "common/network/socket.hpp"
 
 class ClientSocketManager
 {

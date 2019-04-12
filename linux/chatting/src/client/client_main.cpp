@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include "common/network/rssocket.hpp"
+#include "common/network/socket.hpp"
 #include "common/network/tools.hpp"
 
 int main(int argc, const char* argv[])

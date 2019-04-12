@@ -7,7 +7,7 @@
 #include <thread>
 #include <fstream>
 
-#include "common/network/rssocket.hpp"
+#include "common/network/socket.hpp"
 #include "common/network/tools.hpp"
 #include "chat_server.hpp"
 

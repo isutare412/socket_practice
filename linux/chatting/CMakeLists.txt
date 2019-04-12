@@ -14,7 +14,7 @@ set(CLIENT_DIR ${SRC_DIR}/client)
 
 set(COMMON_SRC
     ${COMMON_DIR}/network/tools.cpp
-    ${COMMON_DIR}/network/rssocket.cpp
+    ${COMMON_DIR}/network/socket.cpp
     ${COMMON_DIR}/network/poll.cpp
     ${COMMON_DIR}/network/serialize.cpp
     ${COMMON_DIR}/thread/thread_pool.cpp

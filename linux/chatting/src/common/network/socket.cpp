@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "rssocket.hpp"
+#include "socket.hpp"
 #include "tools.hpp"
 
 namespace RS
