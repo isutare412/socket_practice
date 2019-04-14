@@ -41,7 +41,7 @@ int main(int argc, const char* argv[])
             break;
         }
 
-        EchoMessagePacket packet;
+        RS::EchoMessagePacket packet;
         packet.init(message);
 
         RS::OSerializer ser;

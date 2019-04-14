@@ -2,6 +2,9 @@
 
 #include "packet.hpp"
 
+namespace RS
+{
+
 EchoMessagePacket::EchoMessagePacket() noexcept
 {
     memset(message, 0, sizeof(message));
@@ -16,3 +19,5 @@ void EchoMessagePacket::serialize(RS::Serializer* ser) noexcept
 {
     ser->value(message, sizeof(message));
 }
+
+} // RS

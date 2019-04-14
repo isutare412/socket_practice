@@ -1,5 +1,8 @@
 #include "network/packet_base.hpp"
 
+namespace RS
+{
+
 struct EchoMessagePacket : public RS::PacketBase
 {
     char message[256];
@@ -13,3 +16,5 @@ struct EchoMessagePacket : public RS::PacketBase
         return RS::PacketType::ECHO_MESSAGE;
     }
 };
+
+} // RS
