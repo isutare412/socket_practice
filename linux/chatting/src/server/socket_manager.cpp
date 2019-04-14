@@ -13,11 +13,7 @@ ClientSocketManager::~ClientSocketManager()
     clear();
 }
 
-bool
-ClientSocketManager::register_socket(
-    socket_t socket,
-    const sockaddr_in& address
-) noexcept
+bool ClientSocketManager::register_socket(socket_t socket, const sockaddr_in& address) noexcept
 {
     if (is_socket_registered(socket))
     {
@@ -33,10 +29,7 @@ ClientSocketManager::register_socket(
     return true;
 }
 
-bool
-ClientSocketManager::unregister_socket(
-    socket_t socket
-) noexcept
+bool ClientSocketManager::unregister_socket(socket_t socket) noexcept
 {
     if (!is_socket_registered(socket))
     {
@@ -51,10 +44,7 @@ ClientSocketManager::unregister_socket(
     return true;
 }
 
-bool
-ClientSocketManager::is_socket_registered(
-    socket_t socket
-) const noexcept
+bool ClientSocketManager::is_socket_registered(socket_t socket) const noexcept
 {
     std::shared_lock<std::shared_timed_mutex> reader(m_mutex);
 
@@ -67,10 +57,7 @@ ClientSocketManager::is_socket_registered(
     return true;
 }
 
-void
-ClientSocketManager::for_each_socket(
-    std::function<void(socket_t)>&& callback
-) noexcept
+void ClientSocketManager::for_each_socket(std::function<void(socket_t)>&& callback) noexcept
 {
     std::shared_lock<std::shared_timed_mutex> reader(m_mutex);
 
@@ -80,17 +67,13 @@ ClientSocketManager::for_each_socket(
     }
 }
 
-void
-ClientSocketManager::clear() noexcept
+void ClientSocketManager::clear() noexcept
 {
     std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
     m_sockets.clear();
 }
 
-sockaddr_in
-ClientSocketManager::get_sockaddr(
-    socket_t socket
-) const noexcept
+sockaddr_in ClientSocketManager::get_sockaddr(socket_t socket) const noexcept
 {
     sockaddr_in address;
     memset(&address, 0, sizeof(address));

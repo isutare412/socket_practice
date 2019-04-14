@@ -15,24 +15,10 @@ public:
     virtual ~PollManager() noexcept;
 
 public:
-    bool
-    register_socket(
-        int socket,
-        int16_t event_flags
-    ) noexcept;
-
-    bool
-    unregister_socket(
-        int socket
-    ) noexcept;
-
-    const std::vector<pollfd>*
-    poll(
-        int msec
-    ) noexcept;
-
-    void
-    clear() noexcept;
+    bool register_socket(int socket, int16_t event_flags) noexcept;
+    bool unregister_socket(int socket) noexcept;
+    const std::vector<pollfd>* poll(int msec) noexcept;
+    void clear() noexcept;
 
 private:
     std::vector<pollfd> m_pollfds;

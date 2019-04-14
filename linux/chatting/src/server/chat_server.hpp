@@ -17,48 +17,18 @@ public:
     virtual ~ChatServer();
 
 public:
-    bool
-    initialize(
-        in_port_t port,
-        uint32_t listen_queue_size
-    ) noexcept;
-
-    bool
-    run() noexcept;
+    bool initialize(in_port_t port, uint32_t listen_queue_size) noexcept;
+    bool run() noexcept;
 
 private:
-    bool 
-    handle_client(
-        int socket
-    ) noexcept;
-
-    void
-    accept_client(
-        int socket
-    ) noexcept;
-
-    void
-    close_client(
-        int socket
-    ) noexcept;
-
-    void
-    register_socket(
-        int socket,
-        const sockaddr_in& addr
-    ) noexcept;
+    bool handle_client(int socket) noexcept;
+    void accept_client(int socket) noexcept;
+    void close_client(int socket) noexcept;
+    void register_socket(int socket, const sockaddr_in& addr) noexcept;
 
 private:
-    void
-    echo_client(
-        int sock_fd
-    ) noexcept;
-
-    void
-    send_file(
-        int sock_fd,
-        const char* filename
-    ) noexcept;
+    void echo_client(int sock_fd) noexcept;
+    void send_file(int sock_fd, const char* filename) noexcept;
 
 private:
     int m_server_socket;

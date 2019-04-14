@@ -27,8 +27,7 @@ ThreadTask& ThreadTask::operator=(ThreadTask&& rhs) noexcept
     return *this;
 }
 
-void
-ThreadTask::execute() const noexcept
+void ThreadTask::execute() const noexcept
 {
     m_task();
 }

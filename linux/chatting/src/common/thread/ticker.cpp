@@ -11,24 +11,17 @@ Ticker::Ticker(const std::chrono::milliseconds& msec) noexcept
 {
 }
 
-void
-Ticker::set_func(
-    const std::function<void(std::chrono::milliseconds)>& onTick
-) noexcept
+void Ticker::set_func(const std::function<void(std::chrono::milliseconds)>& onTick) noexcept
 {
     m_onTick = onTick;
 }
 
-void
-Ticker::set_func(
-    std::function<void(std::chrono::milliseconds)>&& onTick
-) noexcept
+void Ticker::set_func(std::function<void(std::chrono::milliseconds)>&& onTick) noexcept
 {
     m_onTick = std::move(onTick);
 }
 
-bool
-Ticker::start() noexcept
+bool Ticker::start() noexcept
 {
     if (m_running || !m_onTick)
     {
@@ -41,14 +34,12 @@ Ticker::start() noexcept
     return true;
 }
 
-void
-Ticker::stop() noexcept
+void Ticker::stop() noexcept
 {
     m_running = false;
 }
 
-void
-Ticker::timer_loop() noexcept
+void Ticker::timer_loop() noexcept
 {
     using namespace std::chrono;
 

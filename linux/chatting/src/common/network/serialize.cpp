@@ -14,56 +14,47 @@ Serializer::Serializer() noexcept
     ::memset(m_buf, '\0', SERIALIZE_BUF_SIZE);
 }
 
-void
-Serializer::value(bool& val) noexcept
+void Serializer::value(bool& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(int16_t& val) noexcept
+void Serializer::value(int16_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(uint16_t& val) noexcept
+void Serializer::value(uint16_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(int32_t& val) noexcept
+void Serializer::value(int32_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(uint32_t& val) noexcept
+void Serializer::value(uint32_t& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(float& val) noexcept
+void Serializer::value(float& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(double& val) noexcept
+void Serializer::value(double& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(long double& val) noexcept
+void Serializer::value(long double& val) noexcept
 {
     value((void*)&val, sizeof(std::remove_reference_t<decltype(val)>));
 }
 
-void
-Serializer::value(char* val, uint32_t length) noexcept
+void Serializer::value(char* val, uint32_t length) noexcept
 {
     value((void*)val, length);
 }
@@ -73,8 +64,7 @@ ISerializer::ISerializer() noexcept
 {
 }
 
-bool
-ISerializer::set(const char* buffer, uint32_t size) noexcept
+bool ISerializer::set(const char* buffer, uint32_t size) noexcept
 {
     if (size > SERIALIZE_BUF_SIZE)
     {
@@ -87,8 +77,7 @@ ISerializer::set(const char* buffer, uint32_t size) noexcept
     return true;
 }
 
-void
-ISerializer::value(void* val, uint32_t size) noexcept
+void ISerializer::value(void* val, uint32_t size) noexcept
 {
     ::memcpy(val, (void*)&m_buf[m_curpos], size);
     m_curpos += size;
@@ -99,8 +88,7 @@ OSerializer::OSerializer() noexcept
 {
 }
 
-int32_t
-OSerializer::get(char* buffer, uint32_t size) noexcept
+int32_t OSerializer::get(char* buffer, uint32_t size) noexcept
 {
     if (m_maxpos > size)
     {
@@ -111,8 +99,7 @@ OSerializer::get(char* buffer, uint32_t size) noexcept
     return m_maxpos;
 }
 
-void
-OSerializer::value(void* val, uint32_t size) noexcept
+void OSerializer::value(void* val, uint32_t size) noexcept
 {
     if (m_maxpos + size > SERIALIZE_BUF_SIZE)
     {

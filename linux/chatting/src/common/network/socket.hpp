@@ -13,44 +13,19 @@ enum class SocketOption : char
 };
 
 
-int
-socket() noexcept;
+int socket() noexcept;
 
-sockaddr_in
-make_sockaddr(
-    in_addr_t addr,
-    in_port_t port
-) noexcept;
+sockaddr_in make_sockaddr(in_addr_t addr, in_port_t port) noexcept;
 
-void
-setsockopt(
-    int socket,
-    SocketOption option
-) noexcept;
+void setsockopt(int socket, SocketOption option) noexcept;
 
-void
-bind(
-    int socket,
-    const sockaddr_in& addr
-) noexcept;
+void bind(int socket, const sockaddr_in& addr) noexcept;
 
-void
-listen(
-    int socket,
-    int accept_buf_size
-) noexcept;
+void listen(int socket, int accept_buf_size) noexcept;
 
-int
-accept(
-    int socket,
-    sockaddr_in& addr
-) noexcept;
+int accept(int socket, sockaddr_in& addr) noexcept;
 
-void
-connect(
-    int socket,
-    const sockaddr_in& addr
-) noexcept;
+void connect(int socket, const sockaddr_in& addr) noexcept;
 
 }
 

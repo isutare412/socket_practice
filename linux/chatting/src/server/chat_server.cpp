@@ -39,11 +39,7 @@ ChatServer::~ChatServer()
     }
 }
 
-bool
-ChatServer::initialize(
-    in_port_t port,
-    uint32_t listen_queue_size
-) noexcept
+bool ChatServer::initialize(in_port_t port, uint32_t listen_queue_size) noexcept
 {
     int server_socket = RS::socket();
     printf("socket created; socket_fd(%d)\n", server_socket);
@@ -68,8 +64,7 @@ ChatServer::initialize(
     return true;
 }
 
-bool
-ChatServer::run() noexcept
+bool ChatServer::run() noexcept
 {
     if (!m_threads.run(true))
     {
@@ -133,10 +128,7 @@ ChatServer::run() noexcept
     return true;
 }
 
-bool
-ChatServer::handle_client(
-    int socket
-) noexcept
+bool ChatServer::handle_client(int socket) noexcept
 {
     int32_t type, size;
     RS::ErrorType error = RS::read_nbytes(socket, &type, sizeof(type));
@@ -167,10 +159,7 @@ ChatServer::handle_client(
     return m_client_packet_handler.handle(type, packet_buf, size);
 }
 
-void
-ChatServer::accept_client(
-    int socket
-) noexcept
+void ChatServer::accept_client(int socket) noexcept
 {
     sockaddr_in clnt_addr;
     int clnt_sock = RS::accept(socket, clnt_addr);
@@ -180,10 +169,7 @@ ChatServer::accept_client(
     register_socket(clnt_sock, clnt_addr);
 }
 
-void
-ChatServer::close_client(
-    int socket
-) noexcept
+void ChatServer::close_client(int socket) noexcept
 {
     if (!m_socket_manager.is_socket_registered(socket))
     {
@@ -204,11 +190,7 @@ ChatServer::close_client(
         socket, RS::sockaddr_to_string(address).c_str());
 }
 
-void
-ChatServer::register_socket(
-    int socket,
-    const sockaddr_in& addr
-) noexcept
+void ChatServer::register_socket(int socket, const sockaddr_in& addr) noexcept
 {
     m_socket_manager.register_socket(socket, addr);
 
@@ -223,10 +205,7 @@ ChatServer::register_socket(
     }
 }
 
-void
-ChatServer::echo_client(
-    int sock_fd
-) noexcept
+void ChatServer::echo_client(int sock_fd) noexcept
 {
     char buf[256];
     int str_len = read(sock_fd, buf, sizeof(buf) - 1);
@@ -238,11 +217,7 @@ ChatServer::echo_client(
     printf("relayed message; client(%d) message(%s)\n", sock_fd, buf);
 }
 
-void
-ChatServer::send_file(
-    int sock_fd,
-    const char* filename
-) noexcept
+void ChatServer::send_file(int sock_fd, const char* filename) noexcept
 {
     std::ifstream ifs(filename);
     if (ifs.fail())

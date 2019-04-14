@@ -26,10 +26,7 @@ ThreadPool::~ThreadPool()
     }
 }
 
-bool
-ThreadPool::run(
-    bool start
-) noexcept
+bool ThreadPool::run(bool start) noexcept
 {
     if (start)
     {
@@ -41,8 +38,7 @@ ThreadPool::run(
     }
 }
 
-void
-ThreadPool::handle_task() noexcept
+void ThreadPool::handle_task() noexcept
 {
     while (true)
     {
@@ -71,8 +67,7 @@ ThreadPool::handle_task() noexcept
     }
 }
 
-bool
-ThreadPool::start_running() noexcept
+bool ThreadPool::start_running() noexcept
 {
     m_block_enqueue = false;
     m_terminate = false;
@@ -95,10 +90,7 @@ ThreadPool::start_running() noexcept
     return true;
 }
 
-bool
-ThreadPool::stop_running(
-    bool wait_task
-) noexcept
+bool ThreadPool::stop_running(bool wait_task) noexcept
 {
     m_block_enqueue = true;
 

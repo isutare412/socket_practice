@@ -10,19 +10,12 @@ namespace RS
 class Semaphore
 {
 public:
-    Semaphore(
-        int64_t initial_count
-    ) noexcept;
+    Semaphore(int64_t initial_count) noexcept;
 
 public:
-    void
-    notify() noexcept;
-
-    void
-    wait() noexcept;
-
-    bool
-    try_wait() noexcept;
+    void notify() noexcept;
+    void wait() noexcept;
+    bool try_wait() noexcept;
 
 private:
     std::mutex m_mutex;

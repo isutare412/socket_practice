@@ -3,8 +3,7 @@
 #include "client_handler.hpp"
 #include "common/packet.hpp"
 
-static bool
-on_echo_message(const EchoMessagePacket& packet)
+static bool on_echo_message(const EchoMessagePacket& packet)
 {
     printf("Got message: %s\n", packet.message);
     return true;

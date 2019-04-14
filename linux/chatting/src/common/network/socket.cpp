@@ -13,8 +13,7 @@
 namespace RS
 {
 
-int
-socket() noexcept
+int socket() noexcept
 {
     // open TCP socket
     int sock = ::socket(PF_INET, SOCK_STREAM, 0);
@@ -26,11 +25,7 @@ socket() noexcept
     return sock;
 }
 
-sockaddr_in
-make_sockaddr(
-    in_addr_t addr,
-    in_port_t port
-) noexcept
+sockaddr_in make_sockaddr(in_addr_t addr, in_port_t port) noexcept
 {
     sockaddr_in serv_addr;
     std::memset(&serv_addr, 0, sizeof(serv_addr));
@@ -41,11 +36,7 @@ make_sockaddr(
     return serv_addr;
 }
 
-void
-setsockopt(
-    int socket,
-    SocketOption option
-) noexcept
+void setsockopt(int socket, SocketOption option) noexcept
 {
     switch (option)
     {
@@ -69,11 +60,7 @@ setsockopt(
     }
 }
 
-void
-bind(
-    int socket,
-    const sockaddr_in& addr
-) noexcept
+void bind(int socket, const sockaddr_in& addr) noexcept
 {
     if (::bind(socket,
         (struct sockaddr*)&addr, sizeof(addr)) == -1)
@@ -83,11 +70,7 @@ bind(
     }
 }
 
-void
-listen(
-    int socket,
-    int accept_buf_size
-) noexcept
+void listen(int socket, int accept_buf_size) noexcept
 {
     if (::listen(socket, accept_buf_size) == -1)
     {
@@ -96,11 +79,7 @@ listen(
     }
 }
 
-int
-accept(
-    int socket,
-    sockaddr_in& addr
-) noexcept
+int accept(int socket, sockaddr_in& addr) noexcept
 {
     socklen_t addr_sz = sizeof(addr);
     int clnt_sock = ::accept(
@@ -114,11 +93,7 @@ accept(
     return clnt_sock;
 }
 
-void
-connect(
-    int socket,
-    const sockaddr_in& addr
-) noexcept
+void connect(int socket, const sockaddr_in& addr) noexcept
 {
     if (::connect(socket, (struct sockaddr*)&addr, sizeof(addr)) == -1)
     {

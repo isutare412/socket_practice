@@ -17,37 +17,18 @@ public:
     Serializer() noexcept;
 
 public:
-    void
-    value(bool& val) noexcept;
-
-    void
-    value(int16_t& val) noexcept;
-
-    void
-    value(uint16_t& val) noexcept;
-
-    void
-    value(int32_t& val) noexcept;
-
-    void
-    value(uint32_t& val) noexcept;
-
-    void
-    value(float& val) noexcept;
-
-    void
-    value(double& val) noexcept;
-
-    void
-    value(long double& val) noexcept;
-
-    void
-    value(char* val, uint32_t length) noexcept;
+    void value(bool& val) noexcept;
+    void value(int16_t& val) noexcept;
+    void value(uint16_t& val) noexcept;
+    void value(int32_t& val) noexcept;
+    void value(uint32_t& val) noexcept;
+    void value(float& val) noexcept;
+    void value(double& val) noexcept;
+    void value(long double& val) noexcept;
+    void value(char* val, uint32_t length) noexcept;
 
 private:
-    virtual
-    void
-    value(void* val, uint32_t size) noexcept = 0;
+    virtual void value(void* val, uint32_t size) noexcept = 0;
 
 protected:
     int8_t m_buf[SERIALIZE_BUF_SIZE];
@@ -61,12 +42,10 @@ public:
     ISerializer() noexcept;
 
 public:
-    bool
-    set(const char* buffer, uint32_t size) noexcept;
+    bool set(const char* buffer, uint32_t size) noexcept;
 
 private:
-    void
-    value(void* val, uint32_t size) noexcept override;
+    void value(void* val, uint32_t size) noexcept override;
 };
 
 class OSerializer : public Serializer
@@ -75,12 +54,10 @@ public:
     OSerializer() noexcept;
 
 public:
-    int32_t
-    get(char* buffer, uint32_t size) noexcept;
+    int32_t get(char* buffer, uint32_t size) noexcept;
 
 private:
-    void
-    value(void* val, uint32_t size) noexcept override;
+    void value(void* val, uint32_t size) noexcept override;
 };
 
 class Serializable

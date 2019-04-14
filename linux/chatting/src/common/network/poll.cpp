@@ -12,11 +12,7 @@ PollManager::~PollManager() noexcept
 {
 }
 
-bool
-PollManager::register_socket(
-    int socket,
-    int16_t event_flags
-) noexcept
+bool PollManager::register_socket(int socket, int16_t event_flags) noexcept
 {
     /*******************************************************************************************
      * Flags for event_flags parameter
@@ -79,10 +75,7 @@ PollManager::register_socket(
     return true;
 }
 
-bool
-PollManager::unregister_socket(
-    int socket
-) noexcept
+bool PollManager::unregister_socket(int socket) noexcept
 {
     auto it = std::find_if(
         m_pollfds.begin(),
@@ -107,10 +100,7 @@ PollManager::unregister_socket(
     return true;
 }
 
-const std::vector<pollfd>*
-PollManager::poll(
-    int msec
-) noexcept
+const std::vector<pollfd>* PollManager::poll(int msec) noexcept
 {
     uint32_t fds_size = m_pollfds.size();
     if (fds_size == 0)
@@ -134,8 +124,7 @@ PollManager::poll(
     return &m_pollfds;
 }
 
-void
-PollManager::clear() noexcept
+void PollManager::clear() noexcept
 {
     m_pollfds.clear();
 }

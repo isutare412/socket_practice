@@ -20,8 +20,7 @@ public:
     ThreadTask& operator=(ThreadTask&& rhs) noexcept;
 
 public:
-    void
-    execute() const noexcept;
+    void execute() const noexcept;
 
 private:
     std::function<void()> m_task;

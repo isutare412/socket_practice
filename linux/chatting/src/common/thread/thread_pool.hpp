@@ -26,29 +26,15 @@ public:
     virtual ~ThreadPool();
 
 public:
-    bool
-    run(
-        bool start
-    ) noexcept;
+    bool run(bool start) noexcept;
 
     template <typename Func, typename... Args>
-    void
-    enqueue(
-        Func&& func,
-        Args&&... args
-    ) noexcept;
+    void enqueue(Func&& func, Args&&... args) noexcept;
 
 private:
-    void
-    handle_task() noexcept;
-
-    bool
-    start_running() noexcept;
-
-    bool
-    stop_running(
-        bool wait_task
-    ) noexcept;
+    void handle_task() noexcept;
+    bool start_running() noexcept;
+    bool stop_running(bool wait_task) noexcept;
 
 private:
     std::mutex m_mutex;
@@ -63,11 +49,7 @@ private:
 };
 
 template <typename Func, typename... Args>
-void
-ThreadPool::enqueue(
-    Func&& func,
-    Args&&... args
-) noexcept
+void ThreadPool::enqueue(Func&& func, Args&&... args) noexcept
 {
     auto boundTask = std::bind(
         std::forward<Func>(func),

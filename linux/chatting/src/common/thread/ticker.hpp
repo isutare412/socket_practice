@@ -15,24 +15,14 @@ public:
     Ticker(const std::chrono::milliseconds& msec) noexcept;
 
 public:
-    void
-    set_func(
-        const std::function<void(std::chrono::milliseconds)>& onTick
-    ) noexcept;
+    void set_func(const std::function<void(std::chrono::milliseconds)>& onTick) noexcept;
+    void set_func(std::function<void(std::chrono::milliseconds)>&& onTick) noexcept;
 
-    void
-    set_func(
-        std::function<void(std::chrono::milliseconds)>&& onTick
-    ) noexcept;
-
-    bool
-    start() noexcept;
-    void
-    stop() noexcept;
+    bool start() noexcept;
+    void stop() noexcept;
 
 private:
-    void
-    timer_loop() noexcept;
+    void timer_loop() noexcept;
 
 private:
     const std::chrono::milliseconds m_tickInterval;
