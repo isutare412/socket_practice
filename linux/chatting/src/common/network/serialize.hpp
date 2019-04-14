@@ -75,7 +75,7 @@ public:
     OSerializer() noexcept;
 
 public:
-    bool
+    int32_t
     get(char* buffer, uint32_t size) noexcept;
 
 private:

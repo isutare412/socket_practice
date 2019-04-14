@@ -99,16 +99,16 @@ OSerializer::OSerializer() noexcept
 {
 }
 
-bool
+int32_t
 OSerializer::get(char* buffer, uint32_t size) noexcept
 {
     if (m_maxpos > size)
     {
-        return false;
+        return -1;
     }
 
     ::memcpy((void*)buffer, (const void*)m_buf, m_maxpos);
-    return true;
+    return m_maxpos;
 }
 
 void

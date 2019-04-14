@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstring>
 #include <unistd.h>
 #include <poll.h>
@@ -120,13 +121,50 @@ ChatServer::run() noexcept
                     // {
                     //     echo_client(socket);
                     // });
-                    echo_client(socket);
+
+                    //echo_client(socket);
+
+                    handle_client(socket);
                 }
             }
         }
     }
 
     return true;
+}
+
+bool
+ChatServer::handle_client(
+    int socket
+) noexcept
+{
+    int32_t type, size;
+    RS::ErrorType error = RS::read_nbytes(socket, &type, sizeof(type));
+    if (error != RS::ErrorType::NO_ERROR)
+    {
+        printf("failed to handle client; type failed\n");
+        return false;
+    }
+
+    error = RS::read_nbytes(socket, &size, sizeof(size));
+    if (error != RS::ErrorType::NO_ERROR)
+    {
+        printf("failed to handle client; size failed\n");
+        return false;
+    }
+
+    type = ntohl(type);
+    size = ntohl(size);
+
+    char packet_buf[SERIALIZE_BUF_SIZE];
+    error = RS::read_nbytes(socket, &packet_buf, size);
+    if (error != RS::ErrorType::NO_ERROR)
+    {
+        printf("failed to handle client; buffer failed\n");
+        return false;
+    }
+
+    return m_client_packet_handler.handle(type, packet_buf, size);
 }
 
 void

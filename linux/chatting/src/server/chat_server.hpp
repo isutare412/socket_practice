@@ -7,6 +7,7 @@
 
 #include "common/network/poll.hpp"
 #include "common/thread/thread_pool.hpp"
+#include "client_handler.hpp"
 #include "socket_manager.hpp"
 
 class ChatServer
@@ -26,6 +27,11 @@ public:
     run() noexcept;
 
 private:
+    bool 
+    handle_client(
+        int socket
+    ) noexcept;
+
     void
     accept_client(
         int socket
@@ -60,6 +66,7 @@ private:
 
     RS::ThreadPool m_threads;
     ClientSocketManager m_socket_manager;
+    ClientHandler m_client_packet_handler;
 
     std::mutex m_poll_mutex;
     RS::PollManager m_polls;

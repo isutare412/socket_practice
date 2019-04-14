@@ -7,6 +7,8 @@
 
 #include "common/network/socket.hpp"
 #include "common/network/tools.hpp"
+#include "common/network/serialize.hpp"
+#include "common/packet.hpp"
 
 int main(int argc, const char* argv[])
 {
@@ -39,6 +41,25 @@ int main(int argc, const char* argv[])
             break;
         }
 
+        EchoMessagePacket packet;
+        packet.init(message);
+
+        RS::OSerializer ser;
+        packet.serialize(&ser);
+
+        char packetbuf[SERIALIZE_BUF_SIZE];
+        int32_t buffersize = ser.get(packetbuf, sizeof(packetbuf));
+
+        int32_t packet_type = htonl((int32_t)RS::PacketType::ECHO_MESSAGE);
+        int32_t netbufsize = htonl(buffersize);
+
+        printf("serialized buffer size: %d\n", buffersize);
+
+        write(sock, &packet_type, sizeof(packet_type));
+        write(sock, &netbufsize, sizeof(netbufsize));
+        write(sock, packetbuf, buffersize);
+
+        /*
         int write_len = write(sock, message, strlen(message));
         memset(message, 0, sizeof(message));
 
@@ -51,6 +72,7 @@ int main(int argc, const char* argv[])
         }
 
         printf("Message from server: %s\n", message);
+        */
     }
 
     close(sock);
