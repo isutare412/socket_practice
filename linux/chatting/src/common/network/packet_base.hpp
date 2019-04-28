@@ -6,6 +6,9 @@
 namespace RS
 {
 
+#define PACKET_HEADER_SIZE (sizeof(int32_t) * 2)
+#define PACKET_MAX_SIZE (PACKET_HEADER_SIZE + SERIALIZE_BUF_SIZE)
+
 enum class PacketType
 {
     ECHO_MESSAGE,
