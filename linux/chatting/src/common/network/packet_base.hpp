@@ -15,6 +15,9 @@ enum class PacketType
 
 struct PacketBase : public Serializable
 {
+    PacketType type;
+
+    PacketBase(PacketType type) : type(type) {}
 };
 
 } // RS

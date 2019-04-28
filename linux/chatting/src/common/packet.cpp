@@ -6,6 +6,7 @@ namespace RS
 {
 
 EchoMessagePacket::EchoMessagePacket() noexcept
+    : PacketBase(RS::PacketType::ECHO_MESSAGE)
 {
     memset(message, 0, sizeof(message));
 }

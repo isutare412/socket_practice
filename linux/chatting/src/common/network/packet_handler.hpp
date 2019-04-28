@@ -101,10 +101,11 @@ template <class PT>
 void PacketHandler<PB, PACKET_MAX>::register_handler(bool (*func)(const PT&)) noexcept
 {
     PacketFunctorBase<PB>* functor = new PacketFunctor<PB, PT>(func);
-    int32_t packet_type = (int32_t)PT::get_type();
-    m_packetFunctors[packet_type] = functor;
+    PT targetPacket;
+    int typeIdx = static_cast<int>(targetPacket.type);
+    m_packetFunctors[typeIdx] = functor;
 
-    printf("registered handler; PacketType(%d)\n", packet_type);
+    printf("registered handler; PacketType(%d)\n", typeIdx);
 }
 
 template <class PB, int32_t PACKET_MAX>
