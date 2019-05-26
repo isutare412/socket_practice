@@ -24,14 +24,7 @@ ChatServer::ChatServer() noexcept
 
 ChatServer::~ChatServer()
 {
-    m_socket_manager.for_each_socket(
-        [](int socket)
-        {
-            close(socket);
-        }
-    );
-
-    m_socket_manager.clear();
+    m_session_manager.clear();
 
     {
         std::lock_guard<std::mutex> lock(m_poll_mutex);
@@ -171,15 +164,13 @@ void ChatServer::accept_client(int socket) noexcept
 
 void ChatServer::close_client(int socket) noexcept
 {
-    if (!m_socket_manager.is_socket_registered(socket))
+    if (!m_session_manager.is_socket_registered(socket))
     {
         return;
     }
 
-    sockaddr_in address = m_socket_manager.get_sockaddr(socket);
-
-    close(socket);
-    m_socket_manager.unregister_socket(socket);
+    sockaddr_in address = m_session_manager.get_sockaddr(socket);
+    m_session_manager.unregister_session(socket);
 
     {
         std::lock_guard<std::mutex> lock(m_poll_mutex);
@@ -192,7 +183,7 @@ void ChatServer::close_client(int socket) noexcept
 
 void ChatServer::register_socket(int socket, const sockaddr_in& addr) noexcept
 {
-    m_socket_manager.register_socket(socket, addr);
+    m_session_manager.register_session(socket, addr);
 
     {
         std::lock_guard<std::mutex> lock(m_poll_mutex);
@@ -232,7 +223,7 @@ void ChatServer::send_file(int sock_fd, const char* filename) noexcept
     );
     ifs.close();
 
-    sockaddr_in address = m_socket_manager.get_sockaddr(sock_fd);
+    sockaddr_in address = m_session_manager.get_sockaddr(sock_fd);
 
     if (write(sock_fd, filebody.c_str(), filebody.size()) == -1)
     {

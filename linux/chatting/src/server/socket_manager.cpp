@@ -4,16 +4,16 @@
 
 #include "socket_manager.hpp"
 
-ClientSocketManager::ClientSocketManager() noexcept
+ClientSessionManager::ClientSessionManager() noexcept
 {
 }
 
-ClientSocketManager::~ClientSocketManager()
+ClientSessionManager::~ClientSessionManager()
 {
     clear();
 }
 
-bool ClientSocketManager::register_socket(socket_t socket, const sockaddr_in& address) noexcept
+bool ClientSessionManager::register_session(socket_t socket, const sockaddr_in& address) noexcept
 {
     if (is_socket_registered(socket))
     {
@@ -24,12 +24,14 @@ bool ClientSocketManager::register_socket(socket_t socket, const sockaddr_in& ad
     {
         std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
 
-        m_sockets[socket] = address;
+        m_sessions.emplace(std::piecewise_construct,
+            std::make_tuple(socket),
+            std::make_tuple(socket, address));
     }
     return true;
 }
 
-bool ClientSocketManager::unregister_socket(socket_t socket) noexcept
+bool ClientSessionManager::unregister_session(socket_t socket) noexcept
 {
     if (!is_socket_registered(socket))
     {
@@ -39,17 +41,17 @@ bool ClientSocketManager::unregister_socket(socket_t socket) noexcept
     {
         std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
 
-        m_sockets.erase(socket);
+        m_sessions.erase(socket);
     }
     return true;
 }
 
-bool ClientSocketManager::is_socket_registered(socket_t socket) const noexcept
+bool ClientSessionManager::is_socket_registered(socket_t socket) const noexcept
 {
     std::shared_lock<std::shared_timed_mutex> reader(m_mutex);
 
-    auto it = m_sockets.find(socket);
-    if (it == m_sockets.end())
+    auto it = m_sessions.find(socket);
+    if (it == m_sessions.end())
     {
         return false;
     }
@@ -57,33 +59,23 @@ bool ClientSocketManager::is_socket_registered(socket_t socket) const noexcept
     return true;
 }
 
-void ClientSocketManager::for_each_socket(std::function<void(socket_t)>&& callback) noexcept
-{
-    std::shared_lock<std::shared_timed_mutex> reader(m_mutex);
-
-    for (const auto& socket_pair : m_sockets)
-    {
-        callback(socket_pair.first);
-    }
-}
-
-void ClientSocketManager::clear() noexcept
+void ClientSessionManager::clear() noexcept
 {
     std::unique_lock<std::shared_timed_mutex> writer(m_mutex);
-    m_sockets.clear();
+    m_sessions.clear();
 }
 
-sockaddr_in ClientSocketManager::get_sockaddr(socket_t socket) const noexcept
+sockaddr_in ClientSessionManager::get_sockaddr(socket_t socket) const noexcept
 {
     sockaddr_in address;
     memset(&address, 0, sizeof(address));
     {
         std::shared_lock<std::shared_timed_mutex> reader(m_mutex);
 
-        auto it = m_sockets.find(socket);
-        if (it != m_sockets.end())
+        auto it = m_sessions.find(socket);
+        if (it != m_sessions.end())
         {
-            address = it->second;
+            it->second.get_address(&address);
         }
     }
 

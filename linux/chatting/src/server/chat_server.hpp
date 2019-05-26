@@ -31,13 +31,16 @@ private:
     void send_file(int sock_fd, const char* filename) noexcept;
 
 private:
+    // these members don't need lock
     int m_server_socket;
     sockaddr_in m_server_addr;
-
-    RS::ThreadPool m_threads;
-    ClientSocketManager m_socket_manager;
     ClientHandler m_client_packet_handler;
 
+    // these members have their own locks
+    RS::ThreadPool m_threads;
+    ClientSessionManager m_session_manager;
+
+    // these members are protected by m_poll_mutex
     std::mutex m_poll_mutex;
     RS::PollManager m_polls;
 };
