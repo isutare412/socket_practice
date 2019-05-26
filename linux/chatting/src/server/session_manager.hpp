@@ -4,13 +4,12 @@
 #include <arpa/inet.h>
 
 #include <map>
-#include <vector>
 #include <mutex>
 #include <shared_mutex>
 #include <functional>
 
 #include "common/network/socket.hpp"
-#include "common/session.hpp"
+#include "client_session.hpp"
 
 class ClientSessionManager
 {
@@ -28,9 +27,12 @@ public:
     void clear() noexcept;
     sockaddr_in get_sockaddr(socket_t socket) const noexcept;
 
+public:
+    void for_session(socket_t socket, const std::function<void(ClientSession*)>& task) noexcept;
+
 private:
     mutable std::shared_timed_mutex m_mutex;
-    std::map<socket_t, RS::SocketSession> m_sessions;
+    std::map<socket_t, ClientSession> m_sessions;
 };
 
 #endif // __CLIENT_MANAGER_HPP__

@@ -5,38 +5,39 @@
 #include <cstring>
 
 #include "serialize.hpp"
+#include "common/session.hpp"
 
 namespace RS
 {
 
-template <class PB>
+template <class ST, class PB>
 class PacketFunctorBase
 {
 public:
     virtual ~PacketFunctorBase() noexcept {};
 
 public:
-    virtual bool handle(const char* buffer, uint32_t size) = 0;
+    virtual bool handle(const char* buffer, uint32_t size, ST* session) = 0;
 };
 
 
-template <class PB, class PT>
-class PacketFunctor : public PacketFunctorBase<PB>
+template <class ST, class PB, class PT>
+class PacketFunctor : public PacketFunctorBase<ST, PB>
 {
 public:
-    using Handler = bool (*)(const PT&);
+    using Handler = bool (*)(ST*, const PT&);
 
 public:
     PacketFunctor(Handler func_ptr) noexcept;
 
-    bool handle(const char* buffer, uint32_t size) noexcept override;
+    bool handle(const char* buffer, uint32_t size, ST* session) noexcept override;
 
 private:
     Handler m_handler;
 };
 
 
-template <class PB, int32_t PACKET_MAX>
+template <class ST, class PB, int32_t PACKET_MAX>
 class PacketHandler
 {
 public:
@@ -45,12 +46,12 @@ public:
 
 public:
     template <class PT>
-    void register_handler(bool (*func)(const PT&)) noexcept;
+    void register_handler(bool (*func)(ST*, const PT&)) noexcept;
 
-    bool handle(int32_t packet_type, const char* buffer, uint32_t bufsize) noexcept;
+    bool handle(int32_t packet_type, const char* buffer, uint32_t bufsize, ST* session) noexcept;
 
 private:
-    PacketFunctorBase<PB>* m_packetFunctors[PACKET_MAX];
+    PacketFunctorBase<ST, PB>* m_packetFunctors[PACKET_MAX];
 };
 
 
@@ -58,14 +59,14 @@ private:
 // PacketFunctor definitions
 ////////////////////////////////////////////////////////////////////////
 
-template <class PB, class PT>
-PacketFunctor<PB, PT>::PacketFunctor(Handler func_ptr) noexcept
+template <class ST, class PB, class PT>
+PacketFunctor<ST, PB, PT>::PacketFunctor(Handler func_ptr) noexcept
     : m_handler(func_ptr)
 {
 }
 
-template <class PB, class PT>
-bool PacketFunctor<PB, PT>::handle(const char* buffer, uint32_t size) noexcept
+template <class ST, class PB, class PT>
+bool PacketFunctor<ST, PB, PT>::handle(const char* buffer, uint32_t size, ST* session) noexcept
 {
     ISerializer ser;
     ser.set(buffer, size);
@@ -73,21 +74,21 @@ bool PacketFunctor<PB, PT>::handle(const char* buffer, uint32_t size) noexcept
     PT packet;
     packet.serialize(&ser);
 
-    return (*m_handler)(packet);
+    return (*m_handler)(session, packet);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // PacketHandler definitions
 ////////////////////////////////////////////////////////////////////////
 
-template <class PB, int32_t PACKET_MAX>
-PacketHandler<PB, PACKET_MAX>::PacketHandler() noexcept
+template <class ST, class PB, int32_t PACKET_MAX>
+PacketHandler<ST, PB, PACKET_MAX>::PacketHandler() noexcept
 {
     memset(m_packetFunctors, 0, sizeof(m_packetFunctors));
 }
 
-template <class PB, int32_t PACKET_MAX>
-PacketHandler<PB, PACKET_MAX>::~PacketHandler() noexcept
+template <class ST, class PB, int32_t PACKET_MAX>
+PacketHandler<ST, PB, PACKET_MAX>::~PacketHandler() noexcept
 {
     for (int32_t i = 0; i < PACKET_MAX; ++i)
     {
@@ -96,11 +97,12 @@ PacketHandler<PB, PACKET_MAX>::~PacketHandler() noexcept
     }
 }
 
-template <class PB, int32_t PACKET_MAX>
+template <class ST, class PB, int32_t PACKET_MAX>
 template <class PT>
-void PacketHandler<PB, PACKET_MAX>::register_handler(bool (*func)(const PT&)) noexcept
+void PacketHandler<ST, PB, PACKET_MAX>::register_handler(
+    bool (*func)(ST*, const PT&)) noexcept
 {
-    PacketFunctorBase<PB>* functor = new PacketFunctor<PB, PT>(func);
+    PacketFunctorBase<ST, PB>* functor = new PacketFunctor<ST, PB, PT>(func);
     PT targetPacket;
     int typeIdx = static_cast<int>(targetPacket.type);
     m_packetFunctors[typeIdx] = functor;
@@ -108,9 +110,9 @@ void PacketHandler<PB, PACKET_MAX>::register_handler(bool (*func)(const PT&)) no
     printf("registered handler; PacketType(%d)\n", typeIdx);
 }
 
-template <class PB, int32_t PACKET_MAX>
-bool PacketHandler<PB, PACKET_MAX>::handle(
-    int32_t packet_type, const char* buffer, uint32_t bufsize) noexcept
+template <class ST, class PB, int32_t PACKET_MAX>
+bool PacketHandler<ST, PB, PACKET_MAX>::handle(
+    int32_t packet_type, const char* buffer, uint32_t bufsize, ST* session) noexcept
 {
     if (packet_type >= PACKET_MAX)
     {
@@ -118,7 +120,7 @@ bool PacketHandler<PB, PACKET_MAX>::handle(
         return false;
     }
 
-    return m_packetFunctors[packet_type]->handle(buffer, bufsize);
+    return m_packetFunctors[packet_type]->handle(buffer, bufsize, session);
 }
 
 }

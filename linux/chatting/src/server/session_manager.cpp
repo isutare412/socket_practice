@@ -81,3 +81,17 @@ sockaddr_in ClientSessionManager::get_sockaddr(socket_t socket) const noexcept
 
     return address;
 }
+
+void ClientSessionManager::for_session(
+    socket_t socket, const std::function<void(ClientSession*)>& task) noexcept
+{
+    std::shared_lock<std::shared_timed_mutex> reader(m_mutex);
+
+    auto it = m_sessions.find(socket);
+    if (it == m_sessions.end())
+    {
+        return;
+    }
+
+    task(&(it->second));
+}

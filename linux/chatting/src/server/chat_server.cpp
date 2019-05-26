@@ -149,7 +149,16 @@ bool ChatServer::handle_client(int socket) noexcept
         return false;
     }
 
-    return m_client_packet_handler.handle(type, packet_buf, size);
+    bool result = false;
+    m_session_manager.for_session(
+        socket,
+        [this, type, packet_buf, size, &result](ClientSession* session)
+        {
+            result = m_client_packet_handler.handle(type, packet_buf, size, session);
+        }
+    );
+
+    return result;
 }
 
 void ChatServer::accept_client(int socket) noexcept

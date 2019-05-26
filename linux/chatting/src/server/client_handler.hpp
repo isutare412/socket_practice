@@ -3,9 +3,10 @@
 
 #include "common/network/packet_handler.hpp"
 #include "common/network/packet_base.hpp"
+#include "client_session.hpp"
 
 class ClientHandler
-    : public RS::PacketHandler<RS::PacketBase, (int32_t)RS::PacketType::PACKET_MAX>
+    : public RS::PacketHandler<ClientSession, RS::PacketBase, (int32_t)RS::PacketType::PACKET_MAX>
 {
 public:
     ClientHandler() noexcept;

@@ -29,6 +29,7 @@ set(SERVER_SRC
     ${SERVER_DIR}/chat_server.cpp
     ${SERVER_DIR}/client_handler.cpp
     ${SERVER_DIR}/server_main.cpp
+    ${SERVER_DIR}/client_session.cpp
 )
 
 set(CLIENT_SRC
