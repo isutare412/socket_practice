@@ -25,7 +25,7 @@ set(COMMON_SRC
 )
 
 set(SERVER_SRC
-    ${SERVER_DIR}/socket_manager.cpp
+    ${SERVER_DIR}/session_manager.cpp
     ${SERVER_DIR}/chat_server.cpp
     ${SERVER_DIR}/client_handler.cpp
     ${SERVER_DIR}/server_main.cpp

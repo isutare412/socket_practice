@@ -8,7 +8,7 @@
 #include "common/network/poll.hpp"
 #include "common/thread/thread_pool.hpp"
 #include "client_handler.hpp"
-#include "socket_manager.hpp"
+#include "session_manager.hpp"
 
 class ChatServer
 {
